@@ -1,0 +1,70 @@
+grammar Dcpu16Asm
+
+  rule instruction
+    (space* label? (basic_instruction / non_basic_instruction / (comment newline+)))+
+  end
+  
+  rule basic_instruction
+    space* basic_instruction_type space* value ',' space* value space* comment? space* newline+
+  end
+
+  rule basic_instruction_type
+    'SET' / 'ADD' / 'SUB' / 'MUL' / 'DIV' / 'MOD' / 'SHL' / 'SHR' / 'AND' / 'BOR' / 'XOR' / 'IFE' / 'IFN' / 'IFG' / 'IFB'
+  end
+  
+  rule non_basic_instruction
+    space* non_basic_instruction_type space* value comment? space* newline+
+  end
+
+  rule non_basic_instruction_type
+    'JSR'
+  end
+
+  rule comment
+    ';' (!newline .)*
+  end
+
+  rule value
+    register / memory_value / label_name / 'POP' / 'PEEK' / 'PUSH' / 'SP' / 'PC' / 'O' / hexadecimal
+  end
+
+  rule register
+    'A' / 'B' / 'C' / 'X' / 'Y' / 'Z' / 'I' / 'J'
+  end
+
+  rule memory_value
+    '[' (register / address / address '+' register) ']'
+  end
+
+  rule address
+    hexadecimal
+  end
+
+  rule integer
+    [0-9] 1..5
+  end
+
+  rule hexadecimal
+    "0x" [0-9a-fA-F] 1..4
+  end
+
+  rule literal
+    "0x" ("0" / "1") [0-9a-fA-F]
+  end
+
+  rule label
+    label_name ':'
+  end
+
+  rule label_name
+    [a-z]+
+  end
+
+  rule space
+    ' ' / "\t"
+  end
+
+  rule newline
+    "\r\n" / "\n"
+  end
+end
