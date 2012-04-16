@@ -5,7 +5,39 @@ module Dcpu16Asm
   include Treetop::Runtime
 
   def root
-    @root ||= :instruction
+    @root ||= :program
+  end
+
+  def _nt_program
+    start_index = index
+    if node_cache[:program].has_key?(index)
+      cached = node_cache[:program][index]
+      if cached
+        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        @index = cached.interval.end
+      end
+      return cached
+    end
+
+    s0, i0 = [], index
+    loop do
+      r1 = _nt_instruction
+      if r1
+        s0 << r1
+      else
+        break
+      end
+    end
+    if s0.empty?
+      @index = i0
+      r0 = nil
+    else
+      r0 = instantiate_node(Program,input, i0...index, s0)
+    end
+
+    node_cache[:program][start_index] = r0
+
+    r0
   end
 
   module Instruction0
@@ -29,95 +61,81 @@ module Dcpu16Asm
       return cached
     end
 
-    s0, i0 = [], index
+    i0, s0 = index, []
+    s1, i1 = [], index
     loop do
-      i1, s1 = index, []
-      s2, i2 = [], index
-      loop do
-        r3 = _nt_space
-        if r3
-          s2 << r3
-        else
-          break
-        end
-      end
-      r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
-      s1 << r2
+      r2 = _nt_space
       if r2
-        r5 = _nt_label
-        if r5
-          r4 = r5
-        else
-          r4 = instantiate_node(SyntaxNode,input, index...index)
-        end
-        s1 << r4
-        if r4
-          i6 = index
-          r7 = _nt_basic_instruction
-          if r7
-            r6 = r7
-          else
-            r8 = _nt_non_basic_instruction
-            if r8
-              r6 = r8
-            else
-              i9, s9 = index, []
-              r10 = _nt_comment
-              s9 << r10
-              if r10
-                s11, i11 = [], index
-                loop do
-                  r12 = _nt_newline
-                  if r12
-                    s11 << r12
-                  else
-                    break
-                  end
-                end
-                if s11.empty?
-                  @index = i11
-                  r11 = nil
-                else
-                  r11 = instantiate_node(SyntaxNode,input, i11...index, s11)
-                end
-                s9 << r11
-              end
-              if s9.last
-                r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
-                r9.extend(Instruction0)
-              else
-                @index = i9
-                r9 = nil
-              end
-              if r9
-                r6 = r9
-              else
-                @index = i6
-                r6 = nil
-              end
-            end
-          end
-          s1 << r6
-        end
-      end
-      if s1.last
-        r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
-        r1.extend(Instruction1)
-      else
-        @index = i1
-        r1 = nil
-      end
-      if r1
-        s0 << r1
+        s1 << r2
       else
         break
       end
     end
-    if s0.empty?
+    r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+    s0 << r1
+    if r1
+      r4 = _nt_label
+      if r4
+        r3 = r4
+      else
+        r3 = instantiate_node(SyntaxNode,input, index...index)
+      end
+      s0 << r3
+      if r3
+        i5 = index
+        r6 = _nt_basic_instruction
+        if r6
+          r5 = r6
+        else
+          r7 = _nt_non_basic_instruction
+          if r7
+            r5 = r7
+          else
+            i8, s8 = index, []
+            r9 = _nt_comment
+            s8 << r9
+            if r9
+              s10, i10 = [], index
+              loop do
+                r11 = _nt_newline
+                if r11
+                  s10 << r11
+                else
+                  break
+                end
+              end
+              if s10.empty?
+                @index = i10
+                r10 = nil
+              else
+                r10 = instantiate_node(SyntaxNode,input, i10...index, s10)
+              end
+              s8 << r10
+            end
+            if s8.last
+              r8 = instantiate_node(SyntaxNode,input, i8...index, s8)
+              r8.extend(Instruction0)
+            else
+              @index = i8
+              r8 = nil
+            end
+            if r8
+              r5 = r8
+            else
+              @index = i5
+              r5 = nil
+            end
+          end
+        end
+        s0 << r5
+      end
+    end
+    if s0.last
+      r0 = instantiate_node(Instruction,input, i0...index, s0)
+      r0.extend(Instruction1)
+    else
       @index = i0
       r0 = nil
-    else
-      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
     end
 
     node_cache[:instruction][start_index] = r0

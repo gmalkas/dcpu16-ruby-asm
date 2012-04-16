@@ -1,7 +1,11 @@
 grammar Dcpu16Asm
 
+  rule program
+    instruction+ <Program>
+  end
+  
   rule instruction
-    (space* label? (basic_instruction / non_basic_instruction / (comment newline+)))+
+    space* label? (basic_instruction / non_basic_instruction / (comment newline+)) <Instruction>
   end
   
   rule basic_instruction
