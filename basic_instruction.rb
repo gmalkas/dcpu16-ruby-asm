@@ -8,7 +8,6 @@ module Dcpu16Asm
     end
 
     def to_bin
-      p text_value
       instruction = value_b.to_s
       instruction << value_a.to_s
       instruction << basic_instruction_type.opcode

@@ -28,6 +28,7 @@ source = <<ASM
   SET [0x1000], 0x20       ; 7de1 1000 0020
   SUB A, [0x1000]          ; 7803 1000
   IFN A, 0x10              ; c00d 
+  SET I, 10
   SET A, 0x2000            ; 7c01 2000
   :loop SET [0x2000 + I], [A]      ; 2161 2000
   SET PC, loop
