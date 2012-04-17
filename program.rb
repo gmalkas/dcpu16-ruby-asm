@@ -6,7 +6,12 @@ module Dcpu16Asm
     def self.register_label(label)
       raise "The label #{label} has already been defined!" if @@labels.key? label 
 
-      @@labels.store(label, @@position)
+      @@labels.store(label, @@position + 1)
+    end
+
+    def self.label_address(label)
+      raise "Unknown label #{label}" unless @@labels.key? label
+      @@labels[label]
     end
 
     def compile(filename)
