@@ -9,11 +9,11 @@ grammar Dcpu16Asm
   end
   
   rule basic_instruction
-    space* basic_instruction_type space* value ',' space* value space* comment? space* newline+
+    space* basic_instruction_type space* value ',' space* value space* comment? space* newline+ <BasicInstruction>
   end
 
   rule basic_instruction_type
-    'SET' / 'ADD' / 'SUB' / 'MUL' / 'DIV' / 'MOD' / 'SHL' / 'SHR' / 'AND' / 'BOR' / 'XOR' / 'IFE' / 'IFN' / 'IFG' / 'IFB'
+    ('SET' / 'ADD' / 'SUB' / 'MUL' / 'DIV' / 'MOD' / 'SHL' / 'SHR' / 'AND' / 'BOR' / 'XOR' / 'IFE' / 'IFN' / 'IFG' / 'IFB') <BasicInstructionType>
   end
   
   rule non_basic_instruction
@@ -29,11 +29,11 @@ grammar Dcpu16Asm
   end
 
   rule value
-    register / memory_value / label_name / 'POP' / 'PEEK' / 'PUSH' / 'SP' / 'PC' / 'O' / hexadecimal
+    (register / memory_value / label_name / 'POP' / 'PEEK' / 'PUSH' / 'SP' / 'PC' / 'O' / hexadecimal)
   end
 
   rule register
-    'A' / 'B' / 'C' / 'X' / 'Y' / 'Z' / 'I' / 'J'
+    ('A' / 'B' / 'C' / 'X' / 'Y' / 'Z' / 'I' / 'J') <Register>
   end
 
   rule memory_value
@@ -57,11 +57,11 @@ grammar Dcpu16Asm
   end
 
   rule label
-    label_name ':'
+    label_name ':' <LabelDeclaration>
   end
 
   rule label_name
-    [a-z]+
+    [a-z]+ <Label>
   end
 
   rule space

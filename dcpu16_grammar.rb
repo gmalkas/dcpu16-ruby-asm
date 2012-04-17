@@ -283,7 +283,7 @@ module Dcpu16Asm
       end
     end
     if s0.last
-      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+      r0 = instantiate_node(BasicInstruction,input, i0...index, s0)
       r0.extend(BasicInstruction0)
     else
       @index = i0
@@ -316,6 +316,7 @@ module Dcpu16Asm
     end
     if r1
       r0 = r1
+      r0.extend(BasicInstructionType)
     else
       if has_terminal?('ADD', false, index)
         r2 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -326,6 +327,7 @@ module Dcpu16Asm
       end
       if r2
         r0 = r2
+        r0.extend(BasicInstructionType)
       else
         if has_terminal?('SUB', false, index)
           r3 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -336,6 +338,7 @@ module Dcpu16Asm
         end
         if r3
           r0 = r3
+          r0.extend(BasicInstructionType)
         else
           if has_terminal?('MUL', false, index)
             r4 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -346,6 +349,7 @@ module Dcpu16Asm
           end
           if r4
             r0 = r4
+            r0.extend(BasicInstructionType)
           else
             if has_terminal?('DIV', false, index)
               r5 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -356,6 +360,7 @@ module Dcpu16Asm
             end
             if r5
               r0 = r5
+              r0.extend(BasicInstructionType)
             else
               if has_terminal?('MOD', false, index)
                 r6 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -366,6 +371,7 @@ module Dcpu16Asm
               end
               if r6
                 r0 = r6
+                r0.extend(BasicInstructionType)
               else
                 if has_terminal?('SHL', false, index)
                   r7 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -376,6 +382,7 @@ module Dcpu16Asm
                 end
                 if r7
                   r0 = r7
+                  r0.extend(BasicInstructionType)
                 else
                   if has_terminal?('SHR', false, index)
                     r8 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -386,6 +393,7 @@ module Dcpu16Asm
                   end
                   if r8
                     r0 = r8
+                    r0.extend(BasicInstructionType)
                   else
                     if has_terminal?('AND', false, index)
                       r9 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -396,6 +404,7 @@ module Dcpu16Asm
                     end
                     if r9
                       r0 = r9
+                      r0.extend(BasicInstructionType)
                     else
                       if has_terminal?('BOR', false, index)
                         r10 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -406,6 +415,7 @@ module Dcpu16Asm
                       end
                       if r10
                         r0 = r10
+                        r0.extend(BasicInstructionType)
                       else
                         if has_terminal?('XOR', false, index)
                           r11 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -416,6 +426,7 @@ module Dcpu16Asm
                         end
                         if r11
                           r0 = r11
+                          r0.extend(BasicInstructionType)
                         else
                           if has_terminal?('IFE', false, index)
                             r12 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -426,6 +437,7 @@ module Dcpu16Asm
                           end
                           if r12
                             r0 = r12
+                            r0.extend(BasicInstructionType)
                           else
                             if has_terminal?('IFN', false, index)
                               r13 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -436,6 +448,7 @@ module Dcpu16Asm
                             end
                             if r13
                               r0 = r13
+                              r0.extend(BasicInstructionType)
                             else
                               if has_terminal?('IFG', false, index)
                                 r14 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -446,6 +459,7 @@ module Dcpu16Asm
                               end
                               if r14
                                 r0 = r14
+                                r0.extend(BasicInstructionType)
                               else
                                 if has_terminal?('IFB', false, index)
                                   r15 = instantiate_node(SyntaxNode,input, index...(index + 3))
@@ -456,6 +470,7 @@ module Dcpu16Asm
                                 end
                                 if r15
                                   r0 = r15
+                                  r0.extend(BasicInstructionType)
                                 else
                                   @index = i0
                                   r0 = nil
@@ -817,6 +832,7 @@ module Dcpu16Asm
     end
     if r1
       r0 = r1
+      r0.extend(Register)
     else
       if has_terminal?('B', false, index)
         r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
@@ -827,6 +843,7 @@ module Dcpu16Asm
       end
       if r2
         r0 = r2
+        r0.extend(Register)
       else
         if has_terminal?('C', false, index)
           r3 = instantiate_node(SyntaxNode,input, index...(index + 1))
@@ -837,6 +854,7 @@ module Dcpu16Asm
         end
         if r3
           r0 = r3
+          r0.extend(Register)
         else
           if has_terminal?('X', false, index)
             r4 = instantiate_node(SyntaxNode,input, index...(index + 1))
@@ -847,6 +865,7 @@ module Dcpu16Asm
           end
           if r4
             r0 = r4
+            r0.extend(Register)
           else
             if has_terminal?('Y', false, index)
               r5 = instantiate_node(SyntaxNode,input, index...(index + 1))
@@ -857,6 +876,7 @@ module Dcpu16Asm
             end
             if r5
               r0 = r5
+              r0.extend(Register)
             else
               if has_terminal?('Z', false, index)
                 r6 = instantiate_node(SyntaxNode,input, index...(index + 1))
@@ -867,6 +887,7 @@ module Dcpu16Asm
               end
               if r6
                 r0 = r6
+                r0.extend(Register)
               else
                 if has_terminal?('I', false, index)
                   r7 = instantiate_node(SyntaxNode,input, index...(index + 1))
@@ -877,6 +898,7 @@ module Dcpu16Asm
                 end
                 if r7
                   r0 = r7
+                  r0.extend(Register)
                 else
                   if has_terminal?('J', false, index)
                     r8 = instantiate_node(SyntaxNode,input, index...(index + 1))
@@ -887,6 +909,7 @@ module Dcpu16Asm
                   end
                   if r8
                     r0 = r8
+                    r0.extend(Register)
                   else
                     @index = i0
                     r0 = nil
@@ -1229,7 +1252,7 @@ module Dcpu16Asm
       s0 << r2
     end
     if s0.last
-      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+      r0 = instantiate_node(LabelDeclaration,input, i0...index, s0)
       r0.extend(Label0)
     else
       @index = i0
@@ -1270,7 +1293,7 @@ module Dcpu16Asm
       @index = i0
       r0 = nil
     else
-      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+      r0 = instantiate_node(Label,input, i0...index, s0)
     end
 
     node_cache[:label_name][start_index] = r0
