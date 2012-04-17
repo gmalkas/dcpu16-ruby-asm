@@ -718,87 +718,79 @@ module Dcpu16Asm
 
     i0 = index
     r1 = _nt_register
+    r1.extend(Register)
     if r1
       r0 = r1
     else
       r2 = _nt_memory_value
+      r2.extend(MemoryValue)
       if r2
         r0 = r2
       else
         r3 = _nt_label_name
+        r3.extend(Label)
         if r3
           r0 = r3
         else
+          i4 = index
           if has_terminal?('POP', false, index)
-            r4 = instantiate_node(SyntaxNode,input, index...(index + 3))
+            r5 = instantiate_node(SyntaxNode,input, index...(index + 3))
             @index += 3
           else
             terminal_parse_failure('POP')
-            r4 = nil
+            r5 = nil
+          end
+          if r5
+            r4 = r5
+            r4.extend(Stack)
+          else
+            if has_terminal?('PEEK', false, index)
+              r6 = instantiate_node(SyntaxNode,input, index...(index + 4))
+              @index += 4
+            else
+              terminal_parse_failure('PEEK')
+              r6 = nil
+            end
+            if r6
+              r4 = r6
+              r4.extend(Stack)
+            else
+              if has_terminal?('PUSH', false, index)
+                r7 = instantiate_node(SyntaxNode,input, index...(index + 4))
+                @index += 4
+              else
+                terminal_parse_failure('PUSH')
+                r7 = nil
+              end
+              if r7
+                r4 = r7
+                r4.extend(Stack)
+              else
+                @index = i4
+                r4 = nil
+              end
+            end
           end
           if r4
             r0 = r4
           else
-            if has_terminal?('PEEK', false, index)
-              r5 = instantiate_node(SyntaxNode,input, index...(index + 4))
-              @index += 4
+            if has_terminal?('O', false, index)
+              r8 = instantiate_node(Flag,input, index...(index + 1))
+              @index += 1
             else
-              terminal_parse_failure('PEEK')
-              r5 = nil
+              terminal_parse_failure('O')
+              r8 = nil
             end
-            if r5
-              r0 = r5
+            if r8
+              r0 = r8
             else
-              if has_terminal?('PUSH', false, index)
-                r6 = instantiate_node(SyntaxNode,input, index...(index + 4))
-                @index += 4
+              r9 = _nt_hexadecimal
+              r9.extend(Literal)
+              if r9
+                r0 = r9
               else
-                terminal_parse_failure('PUSH')
-                r6 = nil
-              end
-              if r6
-                r0 = r6
-              else
-                if has_terminal?('SP', false, index)
-                  r7 = instantiate_node(SyntaxNode,input, index...(index + 2))
-                  @index += 2
-                else
-                  terminal_parse_failure('SP')
-                  r7 = nil
-                end
-                if r7
-                  r0 = r7
-                else
-                  if has_terminal?('PC', false, index)
-                    r8 = instantiate_node(SyntaxNode,input, index...(index + 2))
-                    @index += 2
-                  else
-                    terminal_parse_failure('PC')
-                    r8 = nil
-                  end
-                  if r8
-                    r0 = r8
-                  else
-                    if has_terminal?('O', false, index)
-                      r9 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                      @index += 1
-                    else
-                      terminal_parse_failure('O')
-                      r9 = nil
-                    end
-                    if r9
-                      r0 = r9
-                    else
-                      r10 = _nt_hexadecimal
-                      if r10
-                        r0 = r10
-                      else
-                        @index = i0
-                        r0 = nil
-                      end
-                    end
-                  end
-                end
+                @index = i0
+                r0 = nil
               end
             end
           end
@@ -911,8 +903,32 @@ module Dcpu16Asm
                     r0 = r8
                     r0.extend(Register)
                   else
-                    @index = i0
-                    r0 = nil
+                    if has_terminal?('SP', false, index)
+                      r9 = instantiate_node(SyntaxNode,input, index...(index + 2))
+                      @index += 2
+                    else
+                      terminal_parse_failure('SP')
+                      r9 = nil
+                    end
+                    if r9
+                      r0 = r9
+                      r0.extend(Register)
+                    else
+                      if has_terminal?('PC', false, index)
+                        r10 = instantiate_node(SyntaxNode,input, index...(index + 2))
+                        @index += 2
+                      else
+                        terminal_parse_failure('PC')
+                        r10 = nil
+                      end
+                      if r10
+                        r0 = r10
+                        r0.extend(Register)
+                      else
+                        @index = i0
+                        r0 = nil
+                      end
+                    end
                   end
                 end
               end
@@ -928,16 +944,32 @@ module Dcpu16Asm
   end
 
   module MemoryValue0
-    def address
-      elements[0]
-    end
-
     def register
-      elements[2]
+      elements[3]
     end
   end
 
   module MemoryValue1
+    def address
+      elements[0]
+    end
+
+  end
+
+  module MemoryValue2
+    def address
+      elements[3]
+    end
+  end
+
+  module MemoryValue3
+    def register
+      elements[0]
+    end
+
+  end
+
+  module MemoryValue4
   end
 
   def _nt_memory_value
@@ -961,62 +993,186 @@ module Dcpu16Asm
     end
     s0 << r1
     if r1
-      i2 = index
-      r3 = _nt_register
-      if r3
-        r2 = r3
-      else
-        r4 = _nt_address
-        if r4
-          r2 = r4
+      s2, i2 = [], index
+      loop do
+        r3 = _nt_space
+        if r3
+          s2 << r3
         else
-          i5, s5 = index, []
-          r6 = _nt_address
-          s5 << r6
-          if r6
-            if has_terminal?('+', false, index)
-              r7 = instantiate_node(SyntaxNode,input, index...(index + 1))
-              @index += 1
-            else
-              terminal_parse_failure('+')
-              r7 = nil
-            end
-            s5 << r7
-            if r7
-              r8 = _nt_register
-              s5 << r8
-            end
-          end
-          if s5.last
-            r5 = instantiate_node(SyntaxNode,input, i5...index, s5)
-            r5.extend(MemoryValue0)
-          else
-            @index = i5
-            r5 = nil
-          end
-          if r5
-            r2 = r5
-          else
-            @index = i2
-            r2 = nil
-          end
+          break
         end
       end
+      r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
       s0 << r2
       if r2
-        if has_terminal?(']', false, index)
-          r9 = instantiate_node(SyntaxNode,input, index...(index + 1))
-          @index += 1
-        else
-          terminal_parse_failure(']')
-          r9 = nil
+        i4 = index
+        i5, s5 = index, []
+        r6 = _nt_address
+        s5 << r6
+        if r6
+          i8, s8 = index, []
+          s9, i9 = [], index
+          loop do
+            r10 = _nt_space
+            if r10
+              s9 << r10
+            else
+              break
+            end
+          end
+          r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
+          s8 << r9
+          if r9
+            if has_terminal?("+", false, index)
+              r11 = instantiate_node(SyntaxNode,input, index...(index + 1))
+              @index += 1
+            else
+              terminal_parse_failure("+")
+              r11 = nil
+            end
+            s8 << r11
+            if r11
+              s12, i12 = [], index
+              loop do
+                r13 = _nt_space
+                if r13
+                  s12 << r13
+                else
+                  break
+                end
+              end
+              r12 = instantiate_node(SyntaxNode,input, i12...index, s12)
+              s8 << r12
+              if r12
+                r14 = _nt_register
+                s8 << r14
+              end
+            end
+          end
+          if s8.last
+            r8 = instantiate_node(SyntaxNode,input, i8...index, s8)
+            r8.extend(MemoryValue0)
+          else
+            @index = i8
+            r8 = nil
+          end
+          if r8
+            r7 = r8
+          else
+            r7 = instantiate_node(SyntaxNode,input, index...index)
+          end
+          s5 << r7
         end
-        s0 << r9
+        if s5.last
+          r5 = instantiate_node(SyntaxNode,input, i5...index, s5)
+          r5.extend(MemoryValue1)
+        else
+          @index = i5
+          r5 = nil
+        end
+        if r5
+          r4 = r5
+        else
+          i15, s15 = index, []
+          r16 = _nt_register
+          s15 << r16
+          if r16
+            i18, s18 = index, []
+            s19, i19 = [], index
+            loop do
+              r20 = _nt_space
+              if r20
+                s19 << r20
+              else
+                break
+              end
+            end
+            r19 = instantiate_node(SyntaxNode,input, i19...index, s19)
+            s18 << r19
+            if r19
+              if has_terminal?("+", false, index)
+                r21 = instantiate_node(SyntaxNode,input, index...(index + 1))
+                @index += 1
+              else
+                terminal_parse_failure("+")
+                r21 = nil
+              end
+              s18 << r21
+              if r21
+                s22, i22 = [], index
+                loop do
+                  r23 = _nt_space
+                  if r23
+                    s22 << r23
+                  else
+                    break
+                  end
+                end
+                r22 = instantiate_node(SyntaxNode,input, i22...index, s22)
+                s18 << r22
+                if r22
+                  r24 = _nt_address
+                  s18 << r24
+                end
+              end
+            end
+            if s18.last
+              r18 = instantiate_node(SyntaxNode,input, i18...index, s18)
+              r18.extend(MemoryValue2)
+            else
+              @index = i18
+              r18 = nil
+            end
+            if r18
+              r17 = r18
+            else
+              r17 = instantiate_node(SyntaxNode,input, index...index)
+            end
+            s15 << r17
+          end
+          if s15.last
+            r15 = instantiate_node(SyntaxNode,input, i15...index, s15)
+            r15.extend(MemoryValue3)
+          else
+            @index = i15
+            r15 = nil
+          end
+          if r15
+            r4 = r15
+          else
+            @index = i4
+            r4 = nil
+          end
+        end
+        s0 << r4
+        if r4
+          s25, i25 = [], index
+          loop do
+            r26 = _nt_space
+            if r26
+              s25 << r26
+            else
+              break
+            end
+          end
+          r25 = instantiate_node(SyntaxNode,input, i25...index, s25)
+          s0 << r25
+          if r25
+            if has_terminal?(']', false, index)
+              r27 = instantiate_node(SyntaxNode,input, index...(index + 1))
+              @index += 1
+            else
+              terminal_parse_failure(']')
+              r27 = nil
+            end
+            s0 << r27
+          end
+        end
       end
     end
     if s0.last
       r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
-      r0.extend(MemoryValue1)
+      r0.extend(MemoryValue4)
     else
       @index = i0
       r0 = nil
@@ -1039,6 +1195,7 @@ module Dcpu16Asm
     end
 
     r0 = _nt_hexadecimal
+    r0.extend(Literal)
 
     node_cache[:address][start_index] = r0
 
@@ -1222,9 +1379,8 @@ module Dcpu16Asm
 
   module Label0
     def label_name
-      elements[0]
+      elements[1]
     end
-
   end
 
   def _nt_label
@@ -1239,16 +1395,16 @@ module Dcpu16Asm
     end
 
     i0, s0 = index, []
-    r1 = _nt_label_name
+    if has_terminal?(':', false, index)
+      r1 = instantiate_node(SyntaxNode,input, index...(index + 1))
+      @index += 1
+    else
+      terminal_parse_failure(':')
+      r1 = nil
+    end
     s0 << r1
     if r1
-      if has_terminal?(':', false, index)
-        r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
-        @index += 1
-      else
-        terminal_parse_failure(':')
-        r2 = nil
-      end
+      r2 = _nt_label_name
       s0 << r2
     end
     if s0.last
@@ -1293,7 +1449,7 @@ module Dcpu16Asm
       @index = i0
       r0 = nil
     else
-      r0 = instantiate_node(Label,input, i0...index, s0)
+      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
     end
 
     node_cache[:label_name][start_index] = r0

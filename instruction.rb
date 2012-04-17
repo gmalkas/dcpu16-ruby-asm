@@ -3,13 +3,12 @@ module Dcpu16Asm
     def to_bin
       # If there is a label, we need to register it
       label.register if has_label?
-
       # Find the instruction, either BasicInstruction or NonBasicInstruction
       instruction.to_bin
     end
 
     def size
-      2
+      instruction.size
     end
 
     protected

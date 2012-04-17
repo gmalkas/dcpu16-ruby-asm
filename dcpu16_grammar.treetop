@@ -29,19 +29,24 @@ grammar Dcpu16Asm
   end
 
   rule value
-    (register / memory_value / label_name / 'POP' / 'PEEK' / 'PUSH' / 'SP' / 'PC' / 'O' / hexadecimal)
+    register <Register>
+    / memory_value <MemoryValue>
+    / label_name <Label>
+    / ('POP' / 'PEEK' / 'PUSH') <Stack>
+    / 'O' <Flag>
+    / hexadecimal <Literal>
   end
 
   rule register
-    ('A' / 'B' / 'C' / 'X' / 'Y' / 'Z' / 'I' / 'J') <Register>
+    ('A' / 'B' / 'C' / 'X' / 'Y' / 'Z' / 'I' / 'J' / 'SP' / 'PC') <Register>
   end
 
   rule memory_value
-    '[' (register / address / address '+' register) ']'
+    '[' space* ((address (space* "+" space* register)?) / (register (space* "+" space* address)?)) space* ']'
   end
 
   rule address
-    hexadecimal
+    hexadecimal <Literal>
   end
 
   rule integer
@@ -57,11 +62,11 @@ grammar Dcpu16Asm
   end
 
   rule label
-    label_name ':' <LabelDeclaration>
+    ':' label_name <LabelDeclaration>
   end
 
   rule label_name
-    [a-z]+ <Label>
+    [a-z]+
   end
 
   rule space
