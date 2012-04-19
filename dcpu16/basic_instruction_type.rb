@@ -1,5 +1,19 @@
 module Dcpu16Asm
+
+  #
+  # = BasicInstructionType
+  #
+  # Maps the basic instruction's name with its binary opcode.
+  #
   module BasicInstructionType
+
+    #
+    # Returns the opcode corresponding to the instruction.
+    #
+    # == Returns
+    #
+    # A string of characters
+    #
     def opcode
       case text_value
       when 'SET'

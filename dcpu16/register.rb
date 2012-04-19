@@ -1,5 +1,19 @@
 module Dcpu16Asm
+  
+  # 
+  # = Register
+  #
+  # Maps the register names with their respective binary value.
+  #
   module Register
+
+    #
+    # Returns the binary value associated with the register.
+    #
+    # == Returns
+    #
+    # A string of characters
+    #
     def to_s
       case text_value
       when 'A'

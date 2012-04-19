@@ -1,4 +1,10 @@
 module Dcpu16Asm
+  
+  #
+  # = Program
+  #
+  # Program is the root node.
+  #
   class Program < Treetop::Runtime::SyntaxNode
     @@labels = Hash.new 
     @@position = 0
@@ -14,6 +20,9 @@ module Dcpu16Asm
       @@labels[label]
     end
 
+    #
+    # Compiles the source (the tree) into a binary file.
+    #
     def compile(filename)
       # First pass - define labels
       elements.each do |codeline|
