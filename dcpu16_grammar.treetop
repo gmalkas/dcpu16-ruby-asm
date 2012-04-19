@@ -1,15 +1,23 @@
 grammar Dcpu16Asm
 
   rule program
-    instruction+ <Program>
+    codeline* <Program>
+  end
+
+  rule codeline
+    spacing* ((label (instruction / comment)?) / (instruction / comment)) spacing* <Codeline>
   end
   
   rule instruction
-    space* label? (basic_instruction / non_basic_instruction / (comment newline+)) <Instruction>
+    (basic_instruction / non_basic_instruction) comment? <Instruction>
+  end
+
+  rule spacing
+    newline / space
   end
   
   rule basic_instruction
-    space* basic_instruction_type space* value ',' space* value space* comment? space* newline+ <BasicInstruction>
+    basic_instruction_type space* value ',' space* value space* comment? <BasicInstruction>
   end
 
   rule basic_instruction_type
@@ -17,11 +25,11 @@ grammar Dcpu16Asm
   end
   
   rule non_basic_instruction
-    space* non_basic_instruction_type space* value comment? space* newline+
+    non_basic_instruction_type space* value space* comment? <NonBasicInstruction>
   end
 
   rule non_basic_instruction_type
-    'JSR'
+    'JSR' <NonBasicInstructionType>
   end
 
   rule comment

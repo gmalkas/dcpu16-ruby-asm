@@ -21,33 +21,138 @@ module Dcpu16Asm
 
     s0, i0 = [], index
     loop do
-      r1 = _nt_instruction
+      r1 = _nt_codeline
       if r1
         s0 << r1
       else
         break
       end
     end
-    if s0.empty?
-      @index = i0
-      r0 = nil
-    else
-      r0 = instantiate_node(Program,input, i0...index, s0)
-    end
+    r0 = instantiate_node(Program,input, i0...index, s0)
 
     node_cache[:program][start_index] = r0
 
     r0
   end
 
-  module Instruction0
-    def comment
+  module Codeline0
+    def label
       elements[0]
     end
 
   end
 
-  module Instruction1
+  module Codeline1
+  end
+
+  def _nt_codeline
+    start_index = index
+    if node_cache[:codeline].has_key?(index)
+      cached = node_cache[:codeline][index]
+      if cached
+        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        @index = cached.interval.end
+      end
+      return cached
+    end
+
+    i0, s0 = index, []
+    s1, i1 = [], index
+    loop do
+      r2 = _nt_spacing
+      if r2
+        s1 << r2
+      else
+        break
+      end
+    end
+    r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+    s0 << r1
+    if r1
+      i3 = index
+      i4, s4 = index, []
+      r5 = _nt_label
+      s4 << r5
+      if r5
+        i7 = index
+        r8 = _nt_instruction
+        if r8
+          r7 = r8
+        else
+          r9 = _nt_comment
+          if r9
+            r7 = r9
+          else
+            @index = i7
+            r7 = nil
+          end
+        end
+        if r7
+          r6 = r7
+        else
+          r6 = instantiate_node(SyntaxNode,input, index...index)
+        end
+        s4 << r6
+      end
+      if s4.last
+        r4 = instantiate_node(SyntaxNode,input, i4...index, s4)
+        r4.extend(Codeline0)
+      else
+        @index = i4
+        r4 = nil
+      end
+      if r4
+        r3 = r4
+      else
+        i10 = index
+        r11 = _nt_instruction
+        if r11
+          r10 = r11
+        else
+          r12 = _nt_comment
+          if r12
+            r10 = r12
+          else
+            @index = i10
+            r10 = nil
+          end
+        end
+        if r10
+          r3 = r10
+        else
+          @index = i3
+          r3 = nil
+        end
+      end
+      s0 << r3
+      if r3
+        s13, i13 = [], index
+        loop do
+          r14 = _nt_spacing
+          if r14
+            s13 << r14
+          else
+            break
+          end
+        end
+        r13 = instantiate_node(SyntaxNode,input, i13...index, s13)
+        s0 << r13
+      end
+    end
+    if s0.last
+      r0 = instantiate_node(Codeline,input, i0...index, s0)
+      r0.extend(Codeline1)
+    else
+      @index = i0
+      r0 = nil
+    end
+
+    node_cache[:codeline][start_index] = r0
+
+    r0
+  end
+
+  module Instruction0
   end
 
   def _nt_instruction
@@ -62,77 +167,32 @@ module Dcpu16Asm
     end
 
     i0, s0 = index, []
-    s1, i1 = [], index
-    loop do
-      r2 = _nt_space
-      if r2
-        s1 << r2
+    i1 = index
+    r2 = _nt_basic_instruction
+    if r2
+      r1 = r2
+    else
+      r3 = _nt_non_basic_instruction
+      if r3
+        r1 = r3
       else
-        break
+        @index = i1
+        r1 = nil
       end
     end
-    r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
     s0 << r1
     if r1
-      r4 = _nt_label
-      if r4
-        r3 = r4
+      r5 = _nt_comment
+      if r5
+        r4 = r5
       else
-        r3 = instantiate_node(SyntaxNode,input, index...index)
+        r4 = instantiate_node(SyntaxNode,input, index...index)
       end
-      s0 << r3
-      if r3
-        i5 = index
-        r6 = _nt_basic_instruction
-        if r6
-          r5 = r6
-        else
-          r7 = _nt_non_basic_instruction
-          if r7
-            r5 = r7
-          else
-            i8, s8 = index, []
-            r9 = _nt_comment
-            s8 << r9
-            if r9
-              s10, i10 = [], index
-              loop do
-                r11 = _nt_newline
-                if r11
-                  s10 << r11
-                else
-                  break
-                end
-              end
-              if s10.empty?
-                @index = i10
-                r10 = nil
-              else
-                r10 = instantiate_node(SyntaxNode,input, i10...index, s10)
-              end
-              s8 << r10
-            end
-            if s8.last
-              r8 = instantiate_node(SyntaxNode,input, i8...index, s8)
-              r8.extend(Instruction0)
-            else
-              @index = i8
-              r8 = nil
-            end
-            if r8
-              r5 = r8
-            else
-              @index = i5
-              r5 = nil
-            end
-          end
-        end
-        s0 << r5
-      end
+      s0 << r4
     end
     if s0.last
       r0 = instantiate_node(Instruction,input, i0...index, s0)
-      r0.extend(Instruction1)
+      r0.extend(Instruction0)
     else
       @index = i0
       r0 = nil
@@ -143,17 +203,47 @@ module Dcpu16Asm
     r0
   end
 
+  def _nt_spacing
+    start_index = index
+    if node_cache[:spacing].has_key?(index)
+      cached = node_cache[:spacing][index]
+      if cached
+        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        @index = cached.interval.end
+      end
+      return cached
+    end
+
+    i0 = index
+    r1 = _nt_newline
+    if r1
+      r0 = r1
+    else
+      r2 = _nt_space
+      if r2
+        r0 = r2
+      else
+        @index = i0
+        r0 = nil
+      end
+    end
+
+    node_cache[:spacing][start_index] = r0
+
+    r0
+  end
+
   module BasicInstruction0
     def basic_instruction_type
-      elements[1]
+      elements[0]
     end
 
     def value1
-      elements[3]
+      elements[2]
     end
 
     def value2
-      elements[6]
+      elements[5]
     end
 
   end
@@ -170,111 +260,67 @@ module Dcpu16Asm
     end
 
     i0, s0 = index, []
-    s1, i1 = [], index
-    loop do
-      r2 = _nt_space
-      if r2
-        s1 << r2
-      else
-        break
-      end
-    end
-    r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+    r1 = _nt_basic_instruction_type
     s0 << r1
     if r1
-      r3 = _nt_basic_instruction_type
-      s0 << r3
-      if r3
-        s4, i4 = [], index
-        loop do
-          r5 = _nt_space
-          if r5
-            s4 << r5
-          else
-            break
-          end
+      s2, i2 = [], index
+      loop do
+        r3 = _nt_space
+        if r3
+          s2 << r3
+        else
+          break
         end
-        r4 = instantiate_node(SyntaxNode,input, i4...index, s4)
+      end
+      r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
+      s0 << r2
+      if r2
+        r4 = _nt_value
         s0 << r4
         if r4
-          r6 = _nt_value
-          s0 << r6
-          if r6
-            if has_terminal?(',', false, index)
-              r7 = instantiate_node(SyntaxNode,input, index...(index + 1))
-              @index += 1
-            else
-              terminal_parse_failure(',')
-              r7 = nil
-            end
-            s0 << r7
-            if r7
-              s8, i8 = [], index
-              loop do
-                r9 = _nt_space
-                if r9
-                  s8 << r9
-                else
-                  break
-                end
+          if has_terminal?(',', false, index)
+            r5 = instantiate_node(SyntaxNode,input, index...(index + 1))
+            @index += 1
+          else
+            terminal_parse_failure(',')
+            r5 = nil
+          end
+          s0 << r5
+          if r5
+            s6, i6 = [], index
+            loop do
+              r7 = _nt_space
+              if r7
+                s6 << r7
+              else
+                break
               end
-              r8 = instantiate_node(SyntaxNode,input, i8...index, s8)
+            end
+            r6 = instantiate_node(SyntaxNode,input, i6...index, s6)
+            s0 << r6
+            if r6
+              r8 = _nt_value
               s0 << r8
               if r8
-                r10 = _nt_value
-                s0 << r10
-                if r10
-                  s11, i11 = [], index
-                  loop do
-                    r12 = _nt_space
-                    if r12
-                      s11 << r12
-                    else
-                      break
-                    end
+                s9, i9 = [], index
+                loop do
+                  r10 = _nt_space
+                  if r10
+                    s9 << r10
+                  else
+                    break
                   end
-                  r11 = instantiate_node(SyntaxNode,input, i11...index, s11)
+                end
+                r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
+                s0 << r9
+                if r9
+                  r12 = _nt_comment
+                  if r12
+                    r11 = r12
+                  else
+                    r11 = instantiate_node(SyntaxNode,input, index...index)
+                  end
                   s0 << r11
-                  if r11
-                    r14 = _nt_comment
-                    if r14
-                      r13 = r14
-                    else
-                      r13 = instantiate_node(SyntaxNode,input, index...index)
-                    end
-                    s0 << r13
-                    if r13
-                      s15, i15 = [], index
-                      loop do
-                        r16 = _nt_space
-                        if r16
-                          s15 << r16
-                        else
-                          break
-                        end
-                      end
-                      r15 = instantiate_node(SyntaxNode,input, i15...index, s15)
-                      s0 << r15
-                      if r15
-                        s17, i17 = [], index
-                        loop do
-                          r18 = _nt_newline
-                          if r18
-                            s17 << r18
-                          else
-                            break
-                          end
-                        end
-                        if s17.empty?
-                          @index = i17
-                          r17 = nil
-                        else
-                          r17 = instantiate_node(SyntaxNode,input, i17...index, s17)
-                        end
-                        s0 << r17
-                      end
-                    end
-                  end
                 end
               end
             end
@@ -497,11 +543,11 @@ module Dcpu16Asm
 
   module NonBasicInstruction0
     def non_basic_instruction_type
-      elements[1]
+      elements[0]
     end
 
     def value
-      elements[3]
+      elements[2]
     end
 
   end
@@ -518,36 +564,36 @@ module Dcpu16Asm
     end
 
     i0, s0 = index, []
-    s1, i1 = [], index
-    loop do
-      r2 = _nt_space
-      if r2
-        s1 << r2
-      else
-        break
-      end
-    end
-    r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+    r1 = _nt_non_basic_instruction_type
     s0 << r1
     if r1
-      r3 = _nt_non_basic_instruction_type
-      s0 << r3
-      if r3
-        s4, i4 = [], index
-        loop do
-          r5 = _nt_space
-          if r5
-            s4 << r5
-          else
-            break
-          end
+      s2, i2 = [], index
+      loop do
+        r3 = _nt_space
+        if r3
+          s2 << r3
+        else
+          break
         end
-        r4 = instantiate_node(SyntaxNode,input, i4...index, s4)
+      end
+      r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
+      s0 << r2
+      if r2
+        r4 = _nt_value
         s0 << r4
         if r4
-          r6 = _nt_value
-          s0 << r6
-          if r6
+          s5, i5 = [], index
+          loop do
+            r6 = _nt_space
+            if r6
+              s5 << r6
+            else
+              break
+            end
+          end
+          r5 = instantiate_node(SyntaxNode,input, i5...index, s5)
+          s0 << r5
+          if r5
             r8 = _nt_comment
             if r8
               r7 = r8
@@ -555,43 +601,12 @@ module Dcpu16Asm
               r7 = instantiate_node(SyntaxNode,input, index...index)
             end
             s0 << r7
-            if r7
-              s9, i9 = [], index
-              loop do
-                r10 = _nt_space
-                if r10
-                  s9 << r10
-                else
-                  break
-                end
-              end
-              r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
-              s0 << r9
-              if r9
-                s11, i11 = [], index
-                loop do
-                  r12 = _nt_newline
-                  if r12
-                    s11 << r12
-                  else
-                    break
-                  end
-                end
-                if s11.empty?
-                  @index = i11
-                  r11 = nil
-                else
-                  r11 = instantiate_node(SyntaxNode,input, i11...index, s11)
-                end
-                s0 << r11
-              end
-            end
           end
         end
       end
     end
     if s0.last
-      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+      r0 = instantiate_node(NonBasicInstruction,input, i0...index, s0)
       r0.extend(NonBasicInstruction0)
     else
       @index = i0
@@ -615,7 +630,7 @@ module Dcpu16Asm
     end
 
     if has_terminal?('JSR', false, index)
-      r0 = instantiate_node(SyntaxNode,input, index...(index + 3))
+      r0 = instantiate_node(NonBasicInstructionType,input, index...(index + 3))
       @index += 3
     else
       terminal_parse_failure('JSR')

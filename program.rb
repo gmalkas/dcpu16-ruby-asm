@@ -6,7 +6,7 @@ module Dcpu16Asm
     def self.register_label(label)
       raise "The label #{label} has already been defined!" if @@labels.key? label 
 
-      @@labels.store(label, @@position + 1)
+      @@labels.store(label, @@position)
     end
 
     def self.label_address(label)
@@ -15,12 +15,19 @@ module Dcpu16Asm
     end
 
     def compile(filename)
+      # First pass - define labels
+      elements.each do |codeline|
+        codeline.register_labels
+        @@position += codeline.size
+      end
+
+      # Second pass - write to binary file
       File.open(filename, 'wb') do |f|
-        elements.each do |instruction|
-          f.write instruction.to_bin
-          @@position += instruction.size
+        elements.each do |codeline|
+          f.write codeline.to_bin
         end
       end
     end
+
   end
 end
